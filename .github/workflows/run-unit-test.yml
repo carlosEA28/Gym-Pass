@@ -13,5 +13,11 @@ jobs:
         with:
           node-version: 22
           cache: npm
+
       - run: npm ci
+
+      # ⬇️ ADICIONE ESTA LINHA
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
       - run: npm run test
