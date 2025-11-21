@@ -16,7 +16,9 @@ jobs:
 
       - run: npm ci
 
-      # ⬇️ ADICIONE ESTA LINHA
+      - name: Set DATABASE_URL (fake)
+        run: echo "DATABASE_URL=postgresql://user:pass@localhost:5432/db" >> $GITHUB_ENV
+
       - name: Generate Prisma Client
         run: npx prisma generate
 
