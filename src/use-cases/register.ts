@@ -2,7 +2,6 @@ import { hash } from "bcryptjs";
 import type { UsersRepository } from "../repositories/users-repository.js";
 import { UserAlreadyExistsError } from "./erros/user-already-exists.js";
 import type { User } from "../generated/prisma/client.js";
-import { dispatchUserCreated } from "../broker/messages/user-created.js";
 
 interface RegisterUseCaseParams {
   name: string;
@@ -34,10 +33,6 @@ export class RegisterUseCase {
       name,
       email,
       password_hash,
-    });
-
-    dispatchUserCreated({
-      email: user.email,
     });
 
     return {
