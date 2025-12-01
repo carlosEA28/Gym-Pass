@@ -2,6 +2,7 @@ import { hash } from "bcryptjs";
 import type { UsersRepository } from "../repositories/users-repository.js";
 import { UserAlreadyExistsError } from "./erros/user-already-exists.js";
 import type { User } from "../generated/prisma/client.js";
+import type { OnboardingEmailService } from "./onboarding-email.js";
 
 interface RegisterUseCaseParams {
   name: string;
@@ -14,7 +15,10 @@ interface ResgisterUseCaseResponse {
 }
 
 export class RegisterUseCase {
-  constructor(private usersRepository: UsersRepository) {}
+  constructor(
+    private usersRepository: UsersRepository,
+    private onboardingEmailService: OnboardingEmailService,
+  ) {}
 
   async execute({
     name,
@@ -34,6 +38,8 @@ export class RegisterUseCase {
       email,
       password_hash,
     });
+
+    await this.onboardingEmailService.execute(user.email);
 
     return {
       user,
