@@ -8,10 +8,17 @@ import type { UsersRepository } from "../repositories/users-repository.js";
 let usersRepository: UsersRepository;
 let sut: RegisterUseCase;
 
+class MockMailService {
+  async execute() {
+    return;
+  }
+}
+
 describe("Register Use Case", () => {
   beforeEach(() => {
     usersRepository = new InMemoryUsersRepository();
-    sut = new RegisterUseCase(usersRepository);
+    let mail = new MockMailService() as any;
+    sut = new RegisterUseCase(usersRepository, mail);
   });
 
   it("should hash user password upon registration", async () => {
@@ -23,7 +30,7 @@ describe("Register Use Case", () => {
 
     const isPasswordCorrectlyHashed = await compare(
       "123456",
-      user.password_hash
+      user.password_hash,
     );
 
     expect(isPasswordCorrectlyHashed).toBeTruthy();
@@ -44,7 +51,7 @@ describe("Register Use Case", () => {
           name: "Fulando",
           email,
           password: "123456",
-        })
+        }),
       //espera que a promisse rejeite, e que o erro seja uma instancia de UserAlreadyExistsError
     ).rejects.toBeInstanceOf(UserAlreadyExistsError);
   });
